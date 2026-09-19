@@ -14,3 +14,10 @@
  * via the deterministic template fallback baked into the client bundle.
  */
 export const SERVER_ENABLED: boolean = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SERVER === "true";
+
+/**
+ * Where the "About this demo" link points. Left empty until the case study
+ * has a permanent home on the portfolio site -- when empty, the link is not
+ * rendered at all. Set this to that URL once it exists.
+ */
+export const CASE_STUDY_URL: string = "";

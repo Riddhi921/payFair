@@ -5,7 +5,6 @@
  *   dist/index.html              -- landing page
  *   dist/demo/**                 -- the built React app (web/dist, base=/demo/)
  *   dist/research/index.html     -- the research brief
- *   dist/case-study/index.html   -- the case study
  *   dist/.nojekyll                -- GitHub Pages: don't run Jekyll over this
  *
  * Assumes `engine` and `web` have already been built (see package.json's
@@ -43,10 +42,6 @@ cpSync(
   path.join(ROOT, "research", "payment-terms-research.html"),
   path.join(DIST, "research", "index.html")
 );
-
-console.log("[build-site] copying case study");
-mkdirSync(path.join(DIST, "case-study"), { recursive: true });
-cpSync(path.join(ROOT, "case-study", "index.html"), path.join(DIST, "case-study", "index.html"));
 
 console.log("[build-site] writing .nojekyll (GitHub Pages)");
 writeFileSync(path.join(DIST, ".nojekyll"), "");

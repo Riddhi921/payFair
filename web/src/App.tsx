@@ -11,6 +11,7 @@ import { BreakEvenCard } from "./components/BreakEvenCard";
 import { FinancingFallbackCard } from "./components/FinancingFallbackCard";
 import { MessageDraftCard } from "./components/MessageDraftCard";
 import { ChatWidget } from "./components/ChatWidget";
+import { CASE_STUDY_URL } from "./lib/config";
 
 function App() {
   const [supplierId, setSupplierId] = useState(suppliers[0].id);
@@ -145,6 +146,20 @@ function App() {
         Built on synthetic seed data. See <code className="font-mono">/research</code> for sourcing and{" "}
         <code className="font-mono">/SPEC.md</code> for the product definition. No accounts, no ERP connection, no
         messages are ever sent.
+        {CASE_STUDY_URL && (
+          <>
+            {" "}
+            <a
+              href={CASE_STUDY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-brand-600 hover:underline"
+            >
+              About this demo
+            </a>
+            .
+          </>
+        )}
       </footer>
 
       <ChatWidget

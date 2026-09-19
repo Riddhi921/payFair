@@ -17,7 +17,7 @@ Every supplier, buyer, and dollar figure in this project is fabricated. Nothing 
 | `engine/` | The calculation engine (TypeScript, 44 unit tests) and synthetic seed data — cash-gap math, the negotiation ladder, break-even risk, financing-fallback costs |
 | `web/` | The interactive demo (React + Vite) — deployed at `/demo` |
 | `research/` | The sourced research brief behind the numbers — deployed at `/research` |
-| `case-study/` | Product decisions, corrections made, and eval findings — deployed at `/case-study` |
+| `docs/case-study-draft/` | Product decisions, corrections made, and eval findings — a draft, not part of the deployed site; the demo's "About this demo" link points at `CASE_STUDY_URL` in `web/src/lib/config.ts` once this has a home on the portfolio site |
 | `server/` | Optional Express server for **live AI mode** (see below) — not required for the static demo |
 | `eval/` | Offline evaluation harness for message drafting and the chat fallback — runs with no API key |
 
@@ -89,13 +89,12 @@ If you deploy the server separately (or port it to a serverless function on the 
 1. Builds the engine (`engine/dist`).
 2. Builds the web app with `vite build` — Vite's `base` is set to `/demo/` for production builds, so the app's own assets resolve correctly once deployed under that path.
 3. Assembles `/dist` at the repo root (`scripts/build-site.mjs`):
-   - `dist/index.html` — landing page linking to the three sections
+   - `dist/index.html` — landing page linking to the two sections
    - `dist/demo/` — the built React app
    - `dist/research/index.html` — the research brief
-   - `dist/case-study/index.html` — the case study
    - `dist/.nojekyll` — tells GitHub Pages not to run its Jekyll processor over the output
 
-Each route is a **real file at a real path** (a small multi-page static site, not a single-page app with client-side routing) — `/demo`, `/research`, and `/case-study` all resolve and refresh correctly on any static host with zero rewrite rules required for that reason alone. `vercel.json` still sets `cleanUrls: true` and `trailingSlash: false` so the three routes resolve without a trailing slash or `.html` extension, matching how they're named throughout this README.
+Each route is a **real file at a real path** (a small multi-page static site, not a single-page app with client-side routing) — `/demo` and `/research` both resolve and refresh correctly on any static host with zero rewrite rules required for that reason alone. `vercel.json` still sets `cleanUrls: true` and `trailingSlash: false` so the two routes resolve without a trailing slash or `.html` extension, matching how they're named throughout this README.
 
 ## Deploying
 
@@ -119,7 +118,7 @@ Works cleanly when the Pages site is served from the domain root (a custom domai
    - **Install Command:** `npm install && npm run install:site`
    - **Framework Preset:** Other
 4. Leave environment variables empty (no `VITE_ENABLE_SERVER` -> static template mode). Click **Deploy**.
-5. Once deployed, visit `<your-project>.vercel.app`, `/demo`, `/research`, and `/case-study` to confirm all four resolve — including a hard refresh on each.
+5. Once deployed, visit `<your-project>.vercel.app`, `/demo`, and `/research` to confirm all three resolve — including a hard refresh on each.
 6. Paste the deployed URL into the "Live demo" line at the top of this README.
 
 Equivalent via the CLI, from the repo root:
