@@ -1,0 +1,17 @@
+{
+  "name": "payfair",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "concurrently -n server,web -c blue,magenta \"npm run dev --prefix server\" \"npm run dev --prefix web\"",
+    "test": "npm run test --prefix engine",
+    "eval": "npm run start --prefix eval --",
+    "install:site": "npm install --prefix engine && npm install --prefix web",
+    "build:engine": "npm run build --prefix engine",
+    "build:web": "npm run build --prefix web",
+    "build:site": "npm run build:engine && npm run build:web && node scripts/build-site.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

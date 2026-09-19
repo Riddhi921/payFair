@@ -1,0 +1,81 @@
+[
+  {
+    "id": "cascade-baseline",
+    "archetype": "parts_manufacturer",
+    "supplierId": "cascade-precision-parts",
+    "buyerId": "highline-auto-systems",
+    "description": "Normal case. Walk-away (169d) sits well past the buyer's ask (90d) -- fully affordable, no strain."
+  },
+  {
+    "id": "meridian-marginal",
+    "archetype": "professional_services",
+    "supplierId": "meridian-ops-consulting",
+    "buyerId": "northfield-retail-group",
+    "description": "Marginal case. Walk-away (56d) sits just under the buyer's ask (60d) -- a genuine close call, not a dramatic breach."
+  },
+  {
+    "id": "harbor-baseline",
+    "archetype": "distributor",
+    "supplierId": "harbor-point-distribution",
+    "buyerId": "union-hardware-retail",
+    "description": "Normal case for the fastest-cycle archetype. Other buyers' revenue nearly covers fixed costs, so walk-away is capped at the model's 180-day ceiling."
+  },
+  {
+    "id": "ironclad-baseline",
+    "archetype": "subcontractor",
+    "supplierId": "ironclad-electrical-subcontracting",
+    "buyerId": "summit-general-contractors",
+    "description": "Flagship binding case. Walk-away (39d) is well short of the buyer's ask (100d) -- the archetype with the longest realized DSO in the research is also the one the model flags as most cash-strained."
+  },
+  {
+    "id": "no-workable-middle",
+    "archetype": "subcontractor",
+    "supplierId": "ironclad-electrical-subcontracting",
+    "buyerId": "summit-general-contractors",
+    "overrides": { "supplier": { "cashBuffer": 5000 } },
+    "description": "EDGE CASE: cash buffer slashed to $5,000. Walk-away collapses to ~5 days -- even the supplier's own opening ask (Net 30) is already past it. There is no rung on the ladder that is genuinely safe; the lead recommendation itself proposes a term the business can't actually carry."
+  },
+  {
+    "id": "empty-discount-band",
+    "archetype": "distributor",
+    "supplierId": "harbor-point-distribution",
+    "buyerId": "coastal-builders-supply",
+    "overrides": { "buyer": { "buyerReturnOnCashAssumption": 0.35 } },
+    "description": "EDGE CASE: buyer's assumed return on cash (35%) is set far above the supplier's cost of capital (10%). Since the ceiling/floor bands share the same formula shape, the buyer's floor discount exceeds the supplier's ceiling discount at every rung -- no early-pay discount is ever feasible."
+  },
+  {
+    "id": "high-concentration-high-risk",
+    "archetype": "professional_services",
+    "supplierId": "meridian-ops-consulting",
+    "buyerId": "petra-logistics",
+    "overrides": {
+      "buyer": { "monthlyRevenue": 300000, "requestedTermDays": 200 },
+      "supplier": { "grossMarginPct": 0.02 }
+    },
+    "description": "EDGE CASE: this buyer is inflated to dominate the supplier's revenue (300000/mo vs ~58000/mo from everyone else combined) on a thin-margin engagement (2% margin) with an unusually long ask (200d). Break-even risk breaches 100% of annual gross profit. Tests whether the recommendation becomes more cautious for a buyer the business can't afford to lose -- expected finding: it does not, because the engine has no concentration-awareness signal at all."
+  },
+  {
+    "id": "buyer-already-fast",
+    "archetype": "subcontractor",
+    "supplierId": "ironclad-electrical-subcontracting",
+    "buyerId": "brightline-builders",
+    "overrides": { "buyer": { "requestedTermDays": 30, "typicalDaysLatePastTerm": -5 } },
+    "description": "EDGE CASE: buyer's ask (Net 30) is overridden down to match the supplier's own opening ask exactly, and they historically pay 5 days EARLY. There is no room to ask for anything shorter -- zero days-early exist to price a discount against."
+  },
+  {
+    "id": "tiny-invoice",
+    "archetype": "professional_services",
+    "supplierId": "meridian-ops-consulting",
+    "buyerId": "ashford-health-systems",
+    "overrides": { "buyer": { "monthlyRevenue": 500 } },
+    "description": "EDGE CASE: invoice size shrunk to $500/mo. Stress-tests rounding: dollar figures on discounts and carrying cost round to single dollars or cents, where a template's phrasing ('roughly $X') can look silly or vanish to $0."
+  },
+  {
+    "id": "cash-rich-supplier",
+    "archetype": "subcontractor",
+    "supplierId": "ironclad-electrical-subcontracting",
+    "buyerId": "summit-general-contractors",
+    "overrides": { "supplier": { "cashBuffer": 2000000 } },
+    "description": "Same relationship as ironclad-baseline and no-workable-middle, cash buffer raised to $2M. Walk-away is capped at the model's 180-day ceiling -- fully affordable despite being the archetype the research flags as most cash-strained. Deliberately the same pair as the other two Ironclad scenarios, isolating cash buffer as the only variable."
+  }
+]

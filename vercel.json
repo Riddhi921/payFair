@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm run build:site",
+  "installCommand": "npm install && npm run install:site",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false
+}

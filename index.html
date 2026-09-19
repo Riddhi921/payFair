@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayFair</title>
+<meta name="description" content="PayFair is a payment-terms advisor for small US B2B suppliers. Synthetic demo data only.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{ --paper:#f8fafc; --ink:#0f172a; --ink-soft:#334155; --rule:#e2e8f0; --surface:#ffffff; --brand:#4f46e5; --brand-ink:#3730a3; }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --paper:#0b1120; --ink:#e7e9e2; --ink-soft:#aab1bc; --rule:#293244; --surface:#111827; --brand:#818cf8; --brand-ink:#c7d2fe; }
+  }
+  :root[data-theme="dark"]{ --paper:#0b1120; --ink:#e7e9e2; --ink-soft:#aab1bc; --rule:#293244; --surface:#111827; --brand:#818cf8; --brand-ink:#c7d2fe; }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper); color:var(--ink); font-family:'Inter',system-ui,sans-serif; margin:0;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card{max-width:520px; text-align:center;}
+  .mark{width:52px; height:52px; border-radius:14px; background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.4rem; margin:0 auto 18px;}
+  h1{font-size:1.9rem; font-weight:800; letter-spacing:-0.02em; margin:0 0 10px;}
+  p.dek{color:var(--ink-soft); font-size:1rem; line-height:1.6; margin:0 0 26px;}
+  .badge{display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--brand-ink); background:color-mix(in srgb, var(--brand) 12%, transparent); border-radius:999px; padding:5px 12px; margin-bottom:16px;}
+  .links{display:flex; flex-direction:column; gap:10px;}
+  a.cta{
+    display:block; padding:13px 20px; border-radius:10px; text-decoration:none; font-weight:700; font-size:.95rem;
+    background:var(--surface); border:1px solid var(--rule); color:var(--ink);
+  }
+  a.cta.primary{background:var(--brand); color:#fff; border-color:var(--brand);}
+  a.cta span{display:block; font-weight:400; font-size:.78rem; color:var(--ink-soft); margin-top:2px;}
+  a.cta.primary span{color:rgba(255,255,255,0.85);}
+  footer{margin-top:28px; font-size:.75rem; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="mark">P</div>
+    <span class="badge">Synthetic demo data only</span>
+    <h1>PayFair</h1>
+    <p class="dek">A payment-terms advisor for small US B2B suppliers — find the cash gap, build a negotiation ladder, and know when to stop pushing and finance around it instead.</p>
+    <div class="links">
+      <a class="cta primary" href="/demo">Open the demo<span>Pick a supplier and buyer, see the ladder</span></a>
+      <a class="cta" href="/case-study">Read the case study<span>Decisions, corrections, and honest eval findings</span></a>
+      <a class="cta" href="/research">Read the research brief<span>Sourced data behind every number</span></a>
+    </div>
+    <footer>No login. No real data. Nothing is ever sent anywhere.</footer>
+  </div>
+</body>
+</html>

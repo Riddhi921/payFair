@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayFair case study</title>
+<meta name="description" content="How PayFair went from a research brief to a payment-terms advisor: the product decisions, the corrections, and what the eval found wrong.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#f8fafc; --ink:#0f172a; --ink-soft:#334155; --ink-faint:#64748b; --rule:#e2e8f0;
+    --surface:#ffffff; --surface-2:#f1f5f9;
+    --brand:#4f46e5; --brand-ink:#3730a3; --brand-soft:#eef2ff;
+    --good:#2a6b57; --good-soft:#dcebe3; --bad:#9a382f; --bad-soft:#f3deda;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0b1120; --ink:#e7e9e2; --ink-soft:#aab1bc; --ink-faint:#7c8492; --rule:#293244;
+      --surface:#111827; --surface-2:#1a2334;
+      --brand:#818cf8; --brand-ink:#c7d2fe; --brand-soft:#1e2340;
+      --good:#5fb79b; --good-soft:#1d332c; --bad:#e28378; --bad-soft:#3b2320;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0b1120; --ink:#e7e9e2; --ink-soft:#aab1bc; --ink-faint:#7c8492; --rule:#293244;
+    --surface:#111827; --surface-2:#1a2334;
+    --brand:#818cf8; --brand-ink:#c7d2fe; --brand-soft:#1e2340;
+    --good:#5fb79b; --good-soft:#1d332c; --bad:#e28378; --bad-soft:#3b2320;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--paper); color:var(--ink); font-family:'Inter',system-ui,sans-serif; margin:0; padding-inline:20px; line-height:1.6;}
+  a{color:var(--brand-ink);}
+  code,.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
+  .wrap{max-width:820px; margin-inline:auto; padding-block:48px 80px;}
+  header.top{border-bottom:1px solid var(--rule); margin-inline:-20px; padding-inline:20px;}
+  .top-inner{max-width:820px; margin-inline:auto; display:flex; align-items:center; justify-content:space-between; padding-block:14px; gap:12px; flex-wrap:wrap;}
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800;}
+  .brand .mark{width:26px; height:26px; border-radius:7px; background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.85rem;}
+  nav a{font-size:.85rem; font-weight:600; text-decoration:none; margin-left:16px; color:var(--ink-soft);}
+  nav a:hover{color:var(--brand-ink);}
+  .eyebrow{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--brand-ink); font-weight:700; margin-bottom:10px;}
+  h1{font-size:clamp(1.8rem,4vw,2.4rem); font-weight:800; letter-spacing:-0.02em; margin:0 0 14px; text-wrap:balance;}
+  h2{font-size:1.3rem; font-weight:800; margin:0 0 12px; letter-spacing:-0.01em;}
+  .dek{color:var(--ink-soft); font-size:1.05rem; max-width:65ch;}
+  section{margin-top:44px; padding-top:36px; border-top:1px solid var(--rule);}
+  .card{background:var(--surface); border:1px solid var(--rule); border-radius:12px; padding:18px 20px; margin-bottom:14px;}
+  .card h3{margin:0 0 6px; font-size:1rem; font-weight:700;}
+  .card p{margin:0; color:var(--ink-soft); font-size:.92rem;}
+  .why{margin-top:8px; padding-top:8px; border-top:1px dashed var(--rule); font-size:.85rem; color:var(--ink-faint);}
+  .why strong{color:var(--ink-soft);}
+  ul.tight{margin:0; padding-left:20px;}
+  ul.tight li{margin-bottom:8px; color:var(--ink-soft);}
+  .finding{border-left:3px solid var(--bad); background:var(--bad-soft); border-radius:0 10px 10px 0; padding:14px 16px; margin-bottom:12px;}
+  .finding h4{margin:0 0 4px; font-size:.9rem; font-weight:700; color:var(--ink);}
+  .finding p{margin:0; font-size:.85rem; color:var(--ink-soft);}
+  .stat-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:10px; overflow:hidden; margin:18px 0;}
+  .stat{background:var(--surface); padding:14px;}
+  .stat .n{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:1.3rem;}
+  .stat .l{font-size:.72rem; color:var(--ink-faint); margin-top:2px;}
+  .cta{display:inline-flex; align-items:center; gap:6px; background:var(--brand); color:#fff; padding:10px 18px; border-radius:8px; font-weight:600; font-size:.9rem; text-decoration:none; margin-right:10px; margin-top:6px;}
+  .cta.secondary{background:transparent; color:var(--brand-ink); border:1px solid var(--rule);}
+  footer.page{margin-top:60px; padding-top:20px; border-top:1px solid var(--rule); font-size:.8rem; color:var(--ink-faint);}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand"><span class="mark">P</span> PayFair</div>
+    <nav>
+      <a href="/demo">Demo</a>
+      <a href="/research">Research</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">Case study</div>
+  <h1>From a research brief to a payment-terms advisor</h1>
+  <p class="dek">PayFair helps a small US B2B supplier figure out what payment term it can actually afford, build a negotiation ladder instead of just accepting Net 90, and decide when to stop pushing and finance around it instead. This is the record of how it got built, the decisions made along the way, and — deliberately — what an honest evaluation found still wrong with it.</p>
+
+  <div class="stat-row">
+    <div class="stat"><div class="n">44</div><div class="l">engine unit tests, all hand-checked</div></div>
+    <div class="stat"><div class="n">10</div><div class="l">eval scenarios, 6 engineered edge cases</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">research errors caught and corrected</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">real customer data anywhere</div></div>
+  </div>
+
+  <a class="cta" href="/demo">Try the demo</a>
+  <a class="cta secondary" href="/research">Read the research brief</a>
+
+  <section>
+    <h2>The problem</h2>
+    <p>Small and mid-sized US B2B suppliers usually accept Net-60/90 terms from large buyers because they need the business. They absorb the working-capital cost by borrowing, factoring, or discounting — without knowing what the term actually costs them or what they could realistically ask for instead. Existing tools (C2FO, Taulia, FundThrough) help a supplier get paid faster on a term that's <em>already signed</em>. None of them help plan the term beforehand or negotiate it without risking the relationship.</p>
+  </section>
+
+  <section>
+    <h2>Key decisions</h2>
+
+    <div class="card">
+      <h3>US market, not India</h3>
+      <p>The research base — net-terms norms, DSO benchmarks, the dynamic-discounting/factoring vendor landscape, and the academic literature on buyer–supplier bargaining power — is US-specific and well documented.</p>
+      <div class="why"><strong>Why:</strong> building on a market with sourced, verifiable numbers keeps the tool grounded in reality instead of extrapolation.</div>
+    </div>
+
+    <div class="card">
+      <h3>A term advisor, not a message writer</h3>
+      <p>The first framing was a tool that drafts a "please pay us faster" email. That doesn't tell a supplier what to ask for, or what they can afford to concede.</p>
+      <div class="why"><strong>Why:</strong> the real decision-support value is the cash-gap analysis and the priced ladder. The message is the last-mile output of that decision, not the product.</div>
+    </div>
+
+    <div class="card">
+      <h3>No invented acceptance probabilities</h3>
+      <p>PayFair will never say "68% likely to accept." The relationship break-even check reframes the decision as a break-even question instead.</p>
+      <div class="why"><strong>Why:</strong> the tool has no way to observe or predict a specific buyer's behavior from seed data. A fabricated probability would manufacture false confidence.</div>
+    </div>
+
+    <div class="card">
+      <h3>Every number is labeled synthetic</h3>
+      <p>All 4 supplier archetypes and their buyers are fabricated but realistic — no ERP, no login, no real financial data anywhere in this project.</p>
+      <div class="why"><strong>Why:</strong> with no way to connect real accounting data in this scope, pretending otherwise would risk someone mistaking demo output for real advice.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Corrections made along the way</h2>
+    <p>Three errors were found in the original research brief and fixed rather than left standing:</p>
+    <ul class="tight">
+      <li><strong>Annualized discount math.</strong> A draft claimed a 2% discount for 20 days early was ~36% annualized on Net 30 terms but only ~14–15% on Net 60. Wrong — the formula depends only on the discount and days paid early, not the underlying term length. Corrected to ~37% in both cases.</li>
+      <li><strong>Murfin &amp; Njoroge's "6×" interest-rate gap.</strong> Originally presented as applying broadly to small suppliers. It's specific to that study's sample — 40 major public retail buyers and their suppliers — and is now labeled as such everywhere it appears.</li>
+      <li><strong>A misleading comparison.</strong> C2FO's ~5.82% average APR was compared directly to ~65% online-lender APRs. Removed as a headline stat — the two price different products and different risk, and the side-by-side implied a comparison that wasn't accurate.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What the eval found (and what wasn't fixed)</h2>
+    <p>An offline eval harness (<code>/eval</code>, no API key required) runs 10 scenarios — 4 real, 6 deliberately engineered edge cases — against a fixed rubric. It reports failures first, on purpose. Three findings stood out enough to leave unfixed and document instead:</p>
+
+    <div class="finding">
+      <h4>The deterministic template never states a dollar figure</h4>
+      <p>Only percentages. Every template-drafted message fails the "specific dollar figure" rubric check, on every single scenario. The AI-drafted path is explicitly instructed to include one and is fed a ready-made number — this is a template-specific gap, not a product-wide one.</p>
+    </div>
+
+    <div class="finding">
+      <h4>The offline chat fallback is entirely question-agnostic</h4>
+      <p>It returns the same deterministic recommendation regardless of what's asked — including "what's the capital of France?" It never once says "I don't know." This is the single most important finding the eval produced: no query understanding, only scenario-to-summary mapping.</p>
+    </div>
+
+    <div class="finding">
+      <h4>No revenue-concentration awareness</h4>
+      <p>An engineered scenario made one buyer ~87% of a supplier's revenue on a thin-margin, high-risk deal. The recommendation still led with the most aggressive possible ask — identical to a buyer representing 5% of revenue. The break-even ratio is provably independent of deal size (it cancels out algebraically), so concentration risk can't even be inferred from it today.</p>
+    </div>
+
+    <p>None of these were patched to make the eval pass. The point of building the eval was to find what's actually wrong, not to make the checkmarks green.</p>
+  </section>
+
+  <section>
+    <h2>What's next</h2>
+    <ul class="tight">
+      <li>Fold a dollar-figure into the deterministic message template, matching what the AI path already does.</li>
+      <li>Give the offline chat fallback at least keyword-based routing so it can say "I don't know" instead of always restating the action plan.</li>
+      <li>Add a revenue-concentration input so the recommendation actually gets more conservative for a buyer the business can't afford to lose.</li>
+    </ul>
+  </section>
+
+  <footer class="page">
+    Every figure in this project is synthetic demo data. See <code>/research</code> for sourcing and the project's <code>SPEC.md</code> for the full product definition.
+  </footer>
+</div>
+
+</body>
+</html>

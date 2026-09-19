@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Net Terms Ledger</title>
+<meta name="description" content="Research brief on US B2B supplier payment terms, DSO benchmarks, dynamic discounting vs. factoring, and negotiation leverage -- the sourcing behind PayFair.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#F4F5F0;
+    --ink:#161F2E;
+    --ink-soft:#4C5768;
+    --ink-faint:#7A8494;
+    --rule:#D9DBCF;
+    --surface:#FFFFFF;
+    --surface-2:#ECEEE6;
+    --accent:#A85A26;
+    --accent-ink:#7A3F19;
+    --accent-soft:#F0DCC3;
+    --good:#2A6B57;
+    --good-soft:#DCEBE3;
+    --bad:#9A382F;
+    --bad-soft:#F3DEDA;
+    --shadow: 0 1px 2px rgba(22,31,46,0.06), 0 8px 24px -12px rgba(22,31,46,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#12161D;
+      --ink:#E7E9E2;
+      --ink-soft:#AAB1BC;
+      --ink-faint:#7C8492;
+      --rule:#2B3138;
+      --surface:#191E27;
+      --surface-2:#20262F;
+      --accent:#E2924E;
+      --accent-ink:#F3B075;
+      --accent-soft:#3A2A1B;
+      --good:#5FB79B;
+      --good-soft:#1D332C;
+      --bad:#E28378;
+      --bad-soft:#3B2320;
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12161D;
+    --ink:#E7E9E2;
+    --ink-soft:#AAB1BC;
+    --ink-faint:#7C8492;
+    --rule:#2B3138;
+    --surface:#191E27;
+    --surface-2:#20262F;
+    --accent:#E2924E;
+    --accent-ink:#F3B075;
+    --accent-soft:#3A2A1B;
+    --good:#5FB79B;
+    --good-soft:#1D332C;
+    --bad:#E28378;
+    --bad-soft:#3B2320;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    margin:0;
+    padding-inline:20px;
+    padding-block:0 40px;
+    line-height:1.55;
+  }
+  a{color:var(--accent-ink); text-decoration-thickness:1px; text-underline-offset:2px;}
+  a:hover{color:var(--accent);}
+  h1,h2,h3{font-family:'Fraunces',serif; text-wrap:balance; letter-spacing:-0.01em; margin:0;}
+  .wrap{max-width:1080px; margin-inline:auto;}
+  code, .mono, .tabular{font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums;}
+
+  /* header */
+  header.top{
+    position:sticky; top:env(safe-area-inset-top,0px);
+    background:color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom:1px solid var(--rule);
+    z-index:20;
+    margin-inline:-20px; padding-inline:20px;
+  }
+  .top-inner{max-width:1080px; margin-inline:auto; display:flex; align-items:center; gap:18px; padding-block:12px; flex-wrap:wrap;}
+  .brand{display:flex; align-items:baseline; gap:8px; flex-shrink:0;}
+  .brand .mark{font-family:'Fraunces',serif; font-weight:800; font-size:1.05rem;}
+  .brand .sub{font-size:.72rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em;}
+  nav.jump{display:flex; gap:2px; overflow-x:auto; flex:1; min-width:0;}
+  nav.jump a{
+    white-space:nowrap; font-size:.78rem; color:var(--ink-soft); text-decoration:none;
+    padding:6px 10px; border-radius:6px; font-weight:500;
+  }
+  nav.jump a:hover{background:var(--surface-2); color:var(--ink);}
+
+  /* hero */
+  .hero{max-width:1080px; margin-inline:auto; padding-block:36px 8px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent-ink); font-weight:600; margin-bottom:14px;
+  }
+  .eyebrow::before{content:""; width:18px; height:1px; background:var(--accent);}
+  h1.title{font-size:clamp(1.9rem,4vw,2.7rem); font-weight:800; max-width:22ch;}
+  .dek{color:var(--ink-soft); max-width:62ch; margin-top:12px; font-size:1.02rem;}
+
+  /* ask the ledger */
+  .ask{margin-top:22px;}
+  .ask-card{background:var(--surface); border:1px solid var(--rule); border-radius:14px; box-shadow:var(--shadow); padding:22px;}
+  .ask-head{display:flex; align-items:center; gap:10px;}
+  .ask-head .icon{width:20px; height:20px; flex-shrink:0; color:var(--accent);}
+  .ask-head h2{font-size:1.15rem; font-weight:700;}
+  .ask-sub{color:var(--ink-soft); font-size:.85rem; margin:8px 0 16px; max-width:68ch;}
+  .ask-bar{display:flex; gap:8px; flex-wrap:wrap;}
+  .ask-bar input[type=text]{
+    flex:1; min-width:200px; padding:12px 14px; border:1px solid var(--rule); border-radius:8px;
+    background:var(--paper); color:var(--ink); font-size:.95rem; font-family:'Inter',sans-serif;
+  }
+  .ask-bar input[type=text]:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .ask-bar button{
+    padding:12px 22px; border-radius:8px; border:1px solid var(--accent); background:var(--accent);
+    color:#fff; font-weight:600; cursor:pointer; font-size:.9rem; font-family:'Inter',sans-serif;
+  }
+  .ask-bar button:hover{background:var(--accent-ink); border-color:var(--accent-ink);}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;}
+  .chip{
+    font-size:.76rem; padding:5px 11px; border:1px solid var(--rule); border-radius:999px;
+    background:var(--surface-2); color:var(--ink-soft); cursor:pointer; font-family:'Inter',sans-serif;
+  }
+  .chip:hover{border-color:var(--accent); color:var(--accent-ink);}
+  .ask-results{margin-top:18px; display:flex; flex-direction:column; gap:12px;}
+  .ask-result{border:1px dashed var(--rule); border-radius:10px; padding:14px 16px;}
+  .ask-result .q{font-weight:700; font-size:.92rem; margin-bottom:6px;}
+  .ask-result .a{font-size:.88rem; color:var(--ink-soft); margin-bottom:8px;}
+  .ask-result .meta{display:flex; justify-content:space-between; align-items:center; font-size:.72rem; color:var(--ink-faint);}
+  .ask-empty{font-size:.85rem; color:var(--ink-faint); padding:8px 2px;}
+  .ask-note{font-size:.7rem; color:var(--ink-faint); margin-top:16px; border-top:1px dashed var(--rule); padding-top:10px;}
+
+  /* dashboard */
+  .dashboard{margin-top:28px;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:12px; overflow:hidden;}
+  .stat{background:var(--surface); padding:16px 16px 14px;}
+  .stat .num{font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:1.5rem; font-variant-numeric:tabular-nums; letter-spacing:-0.02em;}
+  .stat .num small{font-size:.9rem; font-weight:500; color:var(--ink-faint);}
+  .stat .label{font-size:.74rem; color:var(--ink-soft); margin-top:4px; line-height:1.3;}
+  .stat .src{font-size:.66rem; color:var(--ink-faint); margin-top:8px;}
+  .stat .src a{color:var(--ink-faint);}
+
+  /* sections */
+  section.block{max-width:1080px; margin-inline:auto; padding-block:46px; border-top:1px solid var(--rule);}
+  .sec-head{display:flex; gap:16px; align-items:baseline; margin-bottom:18px;}
+  .sec-num{font-family:'IBM Plex Mono',monospace; color:var(--accent-ink); font-size:.85rem; font-weight:600; flex-shrink:0; padding-top:6px;}
+  .sec-head h2{font-size:clamp(1.35rem,2.6vw,1.7rem); font-weight:700;}
+  .sec-intro{color:var(--ink-soft); max-width:70ch; margin:0 0 20px; font-size:.98rem;}
+  .cols2{display:grid; grid-template-columns:1fr; gap:28px;}
+  @media(min-width:760px){.cols2{grid-template-columns:1fr 1fr;}}
+
+  ul.bullets{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:12px;}
+  ul.bullets li{padding-left:18px; position:relative; font-size:.95rem;}
+  ul.bullets li::before{content:"—"; position:absolute; left:0; color:var(--accent); font-weight:600;}
+  ul.bullets li .cite{font-size:.72rem; color:var(--ink-faint); display:block; margin-top:2px;}
+
+  /* tables */
+  .tbl-wrap{overflow-x:auto; border:1px solid var(--rule); border-radius:10px; margin:18px 0;}
+  table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:520px;}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--rule); vertical-align:top;}
+  thead th{background:var(--surface-2); font-family:'IBM Plex Mono',monospace; font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:600;}
+  tbody tr:last-child td{border-bottom:none;}
+  td.num{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+
+  /* stamps / chips */
+  .stamp{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:.68rem; font-weight:600;
+    border:1.5px solid currentColor; border-radius:4px; padding:2px 7px; letter-spacing:.03em;
+  }
+  .stamp.net30{color:var(--good);} .stamp.net60{color:var(--accent-ink);} .stamp.net90{color:var(--bad);}
+
+  /* pros/cons */
+  .pc-card{background:var(--surface); border:1px solid var(--rule); border-radius:12px; padding:20px; box-shadow:var(--shadow);}
+  .pc-card h3{font-size:1.05rem; font-weight:700; margin-bottom:4px;}
+  .pc-card .tag{font-size:.72rem; color:var(--ink-faint); margin-bottom:14px; display:block;}
+  .pc-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px;}
+  .pc-col h4{font-size:.68rem; text-transform:uppercase; letter-spacing:.07em; margin:0 0 8px; font-weight:700;}
+  .pc-col.pro h4{color:var(--good);} .pc-col.con h4{color:var(--bad);}
+  .pc-col ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px;}
+  .pc-col li{font-size:.83rem; padding-left:14px; position:relative;}
+  .pc-col.pro li::before{content:"+"; position:absolute; left:0; color:var(--good); font-weight:700;}
+  .pc-col.con li::before{content:"–"; position:absolute; left:0; color:var(--bad); font-weight:700;}
+
+  /* tool cards */
+  .tool-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px;}
+  .tool{background:var(--surface); border:1px solid var(--rule); border-radius:10px; padding:16px;}
+  .tool .cat{font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-ink); font-weight:700; margin-bottom:6px; display:block;}
+  .tool h4{margin:0 0 6px; font-size:1rem; font-family:'Inter'; font-weight:700;}
+  .tool p{margin:0 0 10px; font-size:.83rem; color:var(--ink-soft);}
+  .tool a{font-size:.8rem; font-weight:600;}
+
+  /* callout */
+  .callout{background:var(--accent-soft); border:1px solid var(--accent); border-radius:10px; padding:18px 20px; font-size:.92rem;}
+  .callout strong{color:var(--accent-ink);}
+
+  /* calculator */
+  .calc{background:var(--surface); border:1px solid var(--rule); border-radius:14px; box-shadow:var(--shadow); overflow:hidden;}
+  .calc-head{background:var(--surface-2); padding:14px 22px; border-bottom:1px dashed var(--rule); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
+  .calc-head .doc-no{font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--ink-faint);}
+  .calc-body{padding:22px; display:grid; grid-template-columns:1fr; gap:22px;}
+  @media(min-width:760px){.calc-body{grid-template-columns:1fr 1fr;}}
+  .field{margin-bottom:16px;}
+  .field label{display:flex; justify-content:space-between; font-size:.78rem; color:var(--ink-soft); margin-bottom:6px;}
+  .field label span.val{font-family:'IBM Plex Mono',monospace; color:var(--ink); font-weight:600;}
+  input[type=range]{width:100%; accent-color:var(--accent);}
+  input[type=number]{
+    width:100%; padding:8px 10px; border:1px solid var(--rule); border-radius:6px; background:var(--paper); color:var(--ink);
+    font-family:'IBM Plex Mono',monospace; font-size:.95rem;
+  }
+  .result-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--rule); font-size:.9rem;}
+  .result-row:last-child{border-bottom:none;}
+  .result-row .v{font-family:'IBM Plex Mono',monospace; font-weight:600; font-variant-numeric:tabular-nums;}
+  .result-row.total .v{color:var(--accent-ink); font-size:1.1rem;}
+  .term-badges{display:flex; gap:8px; margin-bottom:14px;}
+  .foot-note{font-size:.75rem; color:var(--ink-faint); padding:14px 22px; border-top:1px dashed var(--rule);}
+
+  /* sources */
+  .src-cat{margin-bottom:26px;}
+  .src-cat h3{font-size:.8rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); font-weight:700; margin-bottom:10px;}
+  .src-list{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px;}
+  .src-list li{font-size:.85rem; padding-left:16px; border-left:2px solid var(--rule); }
+  .src-list .d{color:var(--ink-soft); font-size:.78rem;}
+
+  footer.page{max-width:1080px; margin:0 auto; padding-block:30px 10px; color:var(--ink-faint); font-size:.78rem; border-top:1px solid var(--rule);}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand"><span class="mark">Net Terms Ledger</span><span class="sub">payFair research brief</span></div>
+    <nav class="jump">
+      <a href="#dashboard">Dashboard</a>
+      <a href="#terms">Terms</a>
+      <a href="#dso">DSO</a>
+      <a href="#discounting">Discounting</a>
+      <a href="#factoring">Factoring</a>
+      <a href="#negotiation">Negotiation</a>
+      <a href="#tools">Tools</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#research">Papers</a>
+      <a href="#sources">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Research brief · US B2B payments</div>
+    <h1 class="title">Supplier payment terms &amp; negotiation leverage</h1>
+    <p class="dek">Who holds the leverage when a small supplier invoices a large buyer, what net terms and DSO actually look like across industries, how dynamic discounting and factoring really price out, and what — if anything — helps a supplier negotiate rather than just finance around bad terms. Compiled September 2026 from industry surveys, vendor documentation, and peer-reviewed finance research.</p>
+  </div>
+
+  <div class="ask" id="ask">
+    <div class="ask-card">
+      <div class="ask-head">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <h2>Ask the ledger</h2>
+      </div>
+      <p class="ask-sub">Type a question in plain English about anything below — terms, DSO, discounting, factoring, negotiation, tools, the calculator. This matches keywords against the research on this page; there's no external AI model behind it, so it can only answer what's actually written here, and says so when it can't.</p>
+      <div class="ask-bar">
+        <input type="text" id="askInput" placeholder="e.g. Is factoring cheaper than dynamic discounting?" autocomplete="off">
+        <button id="askBtn" type="button">Ask</button>
+      </div>
+      <div class="chips" id="askChips"></div>
+      <div class="ask-results" id="askResults">
+        <div class="ask-empty">Try a question above, or click one of the examples.</div>
+      </div>
+      <div class="ask-note">Matches against 24 indexed research points on this page — a keyword lookup, not a live model.</div>
+    </div>
+  </div>
+
+  <div class="dashboard" id="dashboard">
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="num">40.1<small> days</small></div>
+        <div class="label">Median US B2B DSO, Q1 2026</div>
+        <div class="src">Credit Research Foundation, via <a href="https://www.creditpulse.com/blog/days-sales-outstanding-dso-by-industry-2025-benchmarks-data-analysis" target="_blank">CreditPulse</a></div>
+      </div>
+      <div class="stat">
+        <div class="num">59<small>%</small></div>
+        <div class="label">Small businesses carrying overdue invoices (2026)</div>
+        <div class="src"><a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2026/" target="_blank">Intuit QuickBooks</a></div>
+      </div>
+      <div class="stat">
+        <div class="num">$17.7<small>K</small></div>
+        <div class="label">Average unpaid balance per small business</div>
+        <div class="src"><a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2026/" target="_blank">Intuit QuickBooks 2026</a></div>
+      </div>
+      <div class="stat">
+        <div class="num">1–5<small>%/mo</small></div>
+        <div class="label">Typical invoice factoring fee</div>
+        <div class="src"><a href="https://www.fundthrough.com/blog/invoice-factoring/invoice-factoring-rates-what-can-i-expect/" target="_blank">FundThrough</a></div>
+      </div>
+      <div class="stat">
+        <div class="num">0.5–2<small>%</small></div>
+        <div class="label">Typical dynamic-discounting rate, no lender involved</div>
+        <div class="src"><a href="https://resolvepay.com/blog/10-statistics-comparing-factoring-vs-dynamic-discounting-costs" target="_blank">Resolve Pay</a></div>
+      </div>
+      <div class="stat">
+        <div class="num">6×<small></small></div>
+        <div class="label">Interest-rate gap, major retail buyers (e.g. Walmart-scale) vs. their suppliers — one study's sample, not a general market figure</div>
+        <div class="src"><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2023409" target="_blank">Murfin &amp; Njoroge, RFS 2015</a></div>
+      </div>
+      <div class="stat">
+        <div class="num">117<small> days</small></div>
+        <div class="label">Slowest large-buyer average payment period found in comparative data</div>
+        <div class="src"><a href="https://www.grocerygazette.co.uk/2024/03/12/coca-cola-serial-late-players/" target="_blank">Grocery Gazette</a></div>
+      </div>
+      <div class="stat">
+        <div class="num">21<small>+</small></div>
+        <div class="label">Large companies signed to the US Chamber's Prompt Pay Pledge</div>
+        <div class="src"><a href="https://www.uschamber.com/major-initiative/prompt-pay-pledge" target="_blank">US Chamber of Commerce</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: TERMS -->
+  <section class="block" id="terms">
+    <div class="sec-head"><span class="sec-num">01</span><h2>What net terms actually look like, by industry</h2></div>
+    <p class="sec-intro">Net 30 is the nominal default almost everywhere, but the term a small supplier actually signs is set by the buyer's size and category, not the supplier's preference. Net 60 and Net 90 are structural in categories with long procurement or production cycles.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Industry</th><th>Typical contracted terms</th><th>Typical realized DSO</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Manufacturing (parts/components to OEMs)</td>
+            <td><span class="stamp net60">NET 60</span> <span class="stamp net90">NET 90</span></td>
+            <td class="num">45–60 days</td>
+            <td>Long procurement cycles; buyer volume dictates terms — e.g. an auto-parts supplier agreeing to Net 90 because of the OEM's order size.</td>
+          </tr>
+          <tr>
+            <td>Professional services</td>
+            <td><span class="stamp net30">NET 30</span> <span class="stamp net60">NET 45</span></td>
+            <td class="num">45–65 days</td>
+            <td>Milestone/retainer billing plus internal approval chains push realized collection well past the stated term.</td>
+          </tr>
+          <tr>
+            <td>Wholesale &amp; distribution</td>
+            <td><span class="stamp net30">NET 30</span> <span class="stamp net60">NET 60</span></td>
+            <td class="num">30–50 days</td>
+            <td>Invoices ride on shipped, delivery-documented goods, which narrows the dispute window and speeds collection.</td>
+          </tr>
+          <tr>
+            <td>Construction / subcontracting</td>
+            <td><span class="stamp net60">NET 60+</span></td>
+            <td class="num">90–120 days</td>
+            <td>Progress billing tied to milestones, plus 5–10% retainage held until project completion.</td>
+          </tr>
+          <tr>
+            <td>Retail-facing B2B</td>
+            <td><span class="stamp net30">NET 30</span></td>
+            <td class="num">~15–30 days</td>
+            <td>Faster cash cycles and standardized EDI/AP processes.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="bullets">
+      <li>Enterprise and government buyers "typically require Net-30 to Net-90 terms," and large buyers with strong balance sheets push for Net 60/90 as a matter of course rather than exception.
+        <span class="cite">Source: <a href="https://nowcorp.com/resources/should-you-offer-net-30-60-90-payment-terms/" target="_blank">Now Corp</a>, <a href="https://resolvepay.com/blog/net-terms-guide-for-b2b-e-commerce-stores-manufacturing-distribution" target="_blank">Resolve Pay</a></span>
+      </li>
+      <li>A small supplier offering the buyer's requested Net 30–90 is effectively extending an interest-free loan for that period — the working-capital strain is structural, not incidental.
+        <span class="cite">Source: <a href="https://www.jpmorgan.com/insights/banking/commercial-banking/net-payment-terms-benefits-of-net-30-60-90-terms" target="_blank">JPMorgan Commercial Banking</a></span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- SECTION 2: DSO -->
+  <section class="block" id="dso">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Days Sales Outstanding, 2025–2026</h2></div>
+    <p class="sec-intro">DSO measures the gap between the contracted term and what actually gets collected — the number that matters for a supplier's real cash position.</p>
+    <div class="cols2">
+      <div>
+        <ul class="bullets">
+          <li>By company size: small businesses target 15–30 days DSO, mid-market runs 30–45 days, enterprise 45–60+ days — the asymmetry means a small supplier waits nearly as long as an enterprise buyer's <em>whole</em> DSO just to get paid by one.
+            <span class="cite">Source: <a href="https://www.stuut.ai/blog/dso-by-company-size-benchmarks-and-improvement-tactics-for-small-mid-market-and-enterprise" target="_blank">Stuut.ai</a></span>
+          </li>
+          <li>The broad US median DSO was 40.50 days in Q4 2025 and 40.12 days in Q1 2026, per Credit Research Foundation trade-receivables surveys.
+            <span class="cite">Source: <a href="https://www.creditpulse.com/blog/days-sales-outstanding-dso-by-industry-2025-benchmarks-data-analysis" target="_blank">CreditPulse (citing CRF)</a></span>
+          </li>
+          <li>One bright spot: US small businesses were paid an average of 7.8 days late in Q4 2025 — the shortest lag in four years, suggesting slow, partial improvement.
+            <span class="cite">Source: <a href="https://www.stuut.ai/blog/dso-benchmarks-by-industry" target="_blank">Stuut.ai</a></span>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <ul class="bullets">
+          <li>59% of small businesses had overdue invoices in 2026 (up from 56% in 2025), averaging $17.7K unpaid at any given time.
+            <span class="cite">Source: <a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2026/" target="_blank">Intuit QuickBooks 2026 report</a></span>
+          </li>
+          <li>Knock-on effects of late payment: 26% of owners delayed their own salary, 19% took on debt or used credit cards they otherwise wouldn't have, 18% paid a bill late and ate a penalty, and 49% describe standard processing delays as a critical or moderate cash-flow gap.
+            <span class="cite">Source: <a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2025/" target="_blank">Intuit QuickBooks 2025 report</a></span>
+          </li>
+          <li>The Fed's Small Business Credit Survey (fielded Sep–Nov 2025, 6,500+ firms) tracks trade credit and factoring usage alongside loans and lines of credit as financing small firms turn to when cash is tight.
+            <span class="cite">Source: <a href="https://www.fedsmallbusiness.org/reports/survey" target="_blank">Fed Small Business</a>, <a href="https://fedcommunities.org/2025-small-business-credit-survey-key-insights/" target="_blank">Fed Communities summary</a></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: DYNAMIC DISCOUNTING -->
+  <section class="block" id="discounting">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Dynamic discounting — the mechanics</h2></div>
+    <p class="sec-intro">C2FO and SAP Taulia run the two dominant dynamic-discounting marketplaces. Mechanically identical idea: the <strong>buyer</strong> pays early using its <em>own</em> cash, in exchange for a discount that scales with how many days early it pays. No bank, factor, or third-party lender sits in the transaction.</p>
+
+    <div class="cols2">
+      <div>
+        <h3 style="font-size:1.05rem; margin-bottom:10px;">How the offer is priced</h3>
+        <ul class="bullets">
+          <li>The discount is expressed and calculated as an APR: <code>discount % = APR × (days paid early ÷ 365)</code>. The earlier the payment, the bigger the discount.
+            <span class="cite">Source: <a href="https://c2fo.com/glossary/dynamic-discounting/" target="_blank">C2FO glossary</a></span>
+          </li>
+          <li>Reverse the formula to check if it's a good deal: <code>annualized rate = discount% ÷ (100% − discount%) × 365 ÷ days early</code>. A 2% discount for 20 days early works out to ~37% annualized — expensive. <strong>Correction:</strong> this rate depends only on the discount and the number of days paid early, not on whether the underlying term is Net 30 or Net 60 — the total contract length doesn't change the math. To bring that same 2% discount down to a more reasonable ~12% annualized, you'd need to be paid roughly 60 days early, not 20.
+            <span class="cite">Formula per <a href="https://beancount.io/blog/2026/07/29/dynamic-discounting-c2fo-taulia-small-suppliers-guide" target="_blank">Beancount.io supplier guide</a>; corrected from an earlier draft of this page that incorrectly implied the Net 60 vs. Net 30 baseline changed the annualized rate.</span>
+          </li>
+          <li>C2FO reports an average buyer-side APR around 5.82%, achieved by blending offers across suppliers (e.g. combining a 6% APR supplier with a 4% APR supplier to hit a 5% target).
+            <span class="cite">Source: <a href="https://www.pymnts.com/news/2015/c2fo-finds-financial-middle-ground-between-buyers-and-suppliers/" target="_blank">PYMNTS</a>. (An earlier draft compared this to ~65% online-lender APRs — removed as a headline stat since the two aren't a like-for-like comparison: different products, different risk being priced.)</span>
+          </li>
+          <li>SAP Taulia's version works the same way but is embedded directly in SAP AP workflows; in 2025, Applied Materials saw a 23% jump in supplier usage, which the vendor reads as suppliers under more cash-flow pressure.
+            <span class="cite">Source: <a href="https://erp.today/applied-materials-sap-taulia-dynamic-discounting-finance-transformation/" target="_blank">ERP Today</a>, <a href="https://taulia.com/dynamic-discounting-phase-2/" target="_blank">SAP Taulia</a></span>
+          </li>
+        </ul>
+      </div>
+      <div class="pc-card">
+        <h3>Dynamic discounting</h3>
+        <span class="tag">C2FO · SAP Taulia · buyer-funded, no lender</span>
+        <div class="pc-grid">
+          <div class="pc-col pro">
+            <h4>Pros</h4>
+            <ul>
+              <li>Cheapest early-payment option when it's available — no credit-risk premium since the buyer already knows and trusts the invoice</li>
+              <li>Cash in 24–48 hours once accepted</li>
+              <li>Supplier keeps full invoice ownership; no factor takes over the customer relationship</li>
+              <li>Rate is transparent and supplier-selected, not dictated</li>
+            </ul>
+          </div>
+          <div class="pc-col con">
+            <h4>Cons</h4>
+            <ul>
+              <li>Only exists if the buyer has opted in to a program — supplier can't force it</li>
+              <li>Effective APR can be brutal on already-short terms (Net 30) even though it looks like "just 2%"</li>
+              <li>Recurring use quietly erodes margin if not tracked as a real financing cost</li>
+              <li>Buyer, not supplier, controls how much capital is made available</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: FACTORING -->
+  <section class="block" id="factoring">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Factoring vs. dynamic discounting</h2></div>
+    <p class="sec-intro">Both get a supplier cash before the due date. The economic difference is who absorbs the buyer's credit risk — and that's exactly what shows up in the price.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th></th><th>Dynamic discounting</th><th>Invoice factoring</th></tr></thead>
+        <tbody>
+          <tr><td>Who funds it</td><td>The buyer, with its own cash</td><td>A third-party factor / lender</td></tr>
+          <tr><td>Who holds the credit risk</td><td>Nobody new — buyer already owed the money</td><td>The factor (this is what it's charging for)</td></tr>
+          <tr><td>Typical cost</td><td class="num">0.5%–2% of invoice value</td><td class="num">1%–5% of invoice value <em>per month</em></td></tr>
+          <tr><td>Advance rate</td><td class="num">100% minus discount, on acceptance</td><td class="num">~80–90% upfront (transportation niches: 97–100%+)</td></tr>
+          <tr><td>Invoice ownership</td><td>Stays with supplier</td><td>Sold to the factor</td></tr>
+          <tr><td>Extra fees</td><td>Generally none beyond the discount</td><td>Often stacks application, service, sign-up and wire fees on top</td></tr>
+          <tr><td>Needs buyer opt-in?</td><td>Yes — buyer must run a program</td><td>No — supplier can factor unilaterally</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.8rem; color:var(--ink-faint);">Sources: <a href="https://resolvepay.com/blog/10-statistics-comparing-factoring-vs-dynamic-discounting-costs" target="_blank">Resolve Pay</a>, <a href="https://www.fundthrough.com/blog/invoice-factoring/invoice-factoring-rates-what-can-i-expect/" target="_blank">FundThrough</a>, <a href="https://ecapital.com/blog/2022-invoice-factoring-rates-and-costs/" target="_blank">eCapital</a>, <a href="https://www.smbcompass.com/invoice-factoring-rates/" target="_blank">SMB Compass</a></p>
+
+    <div class="pc-card" style="margin-top:20px;">
+      <h3>Invoice factoring</h3>
+      <span class="tag">FundThrough · eCapital · third-party funded</span>
+      <div class="pc-grid">
+        <div class="pc-col pro">
+          <h4>Pros</h4>
+          <ul>
+            <li>Available regardless of whether the buyer participates in anything</li>
+            <li>Removes the receivable — and its collection risk — from the supplier's books entirely</li>
+            <li>Some niches (e.g. freight/transportation) get very high advance rates, 97–100%+</li>
+            <li>Faster to arrange than negotiating a program with every buyer</li>
+          </ul>
+        </div>
+        <div class="pc-col con">
+          <h4>Cons</h4>
+          <ul>
+            <li>3–10x more expensive than dynamic discounting on an annualized basis</li>
+            <li>Fees pile up: invoice-aging tiers, application/service/wire fees on top of the base rate</li>
+            <li>A third party now contacts your customer for collection — can strain the buyer relationship</li>
+            <li>Invoices over ~60 days old are priced much higher or declined outright</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: NEGOTIATION -->
+  <section class="block" id="negotiation">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Negotiation leverage &amp; prompt-payment advocacy</h2></div>
+    <p class="sec-intro">Peer-reviewed corporate-finance research is blunt about who has the power in these relationships — and US advocacy has responded with voluntary pledges rather than legal mandates.</p>
+
+    <div class="cols2">
+      <div>
+        <h3 style="font-size:1.05rem; margin-bottom:10px;">What the finance literature finds</h3>
+        <ul class="bullets">
+          <li>"Suppliers with weak bargaining power towards their customers are more likely to extend trade credit, have a larger share of goods sold on credit, and offer a longer payment period before imposing penalties."
+            <span class="cite">Fabbri &amp; Klapper, <a href="https://www.sciencedirect.com/science/article/abs/pii/S0929119916300748" target="_blank">"Bargaining Power and Trade Credit," J. Corporate Finance</a></span>
+          </li>
+          <li>A one-standard-deviation increase in a listed firm's bargaining power as a buyer increases its use of payables financing by 1.73% of sales — the squeeze is measurable, not anecdotal.
+            <span class="cite">Source: <a href="https://ideas.repec.org/a/eee/corfin/v41y2016icp66-80.html" target="_blank">RePEc / ScienceDirect</a></span>
+          </li>
+          <li>Better access to bank credit measurably improves a supplier's bargaining position specifically against powerful (not weak) customers — meaning financing tools double as negotiating leverage, not just a workaround.
+            <span class="cite">Source: <a href="https://www.sciencedirect.com/science/article/abs/pii/S0378426624000293" target="_blank">"Bargaining power and trade credit: heterogeneous effect of credit contractions"</a></span>
+          </li>
+          <li>In a study of major public retail buyers (40 large retailers, including big-box-scale companies) and their suppliers, when the buyer slows payment by one month, a financially constrained supplier cuts capital expenditure by ~1.2% of assets — the median supplier in that sample ($29M market cap) faced interest rates roughly 6x the median buyer's ($23B market cap). This is that study's specific sample, not a general claim about all small-supplier/large-buyer pairs.
+            <span class="cite">Murfin &amp; Njoroge, <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2023409" target="_blank">RFS 2015</a> — <a href="https://insights.som.yale.edu/insights/big-box-retailers-squeeze-smaller-suppliers-by-borrowing-from-them" target="_blank">Yale Insights summary</a></span>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-size:1.05rem; margin-bottom:10px;">Practical tactics + US advocacy</h3>
+        <ul class="bullets">
+          <li>Negotiate price and payment terms as <em>separate</em> conversations — bundling them lets the buyer trade a worse term for a price concession without either side noticing the real cost.
+            <span class="cite">Source: <a href="https://phoenixstrategy.group/blog/how-to-negotiate-supplier-payment-terms" target="_blank">Phoenix Strategy Group</a></span>
+          </li>
+          <li>Bring competitive benchmarks into the room — 2–3 alternative-vendor quotes or documented industry-standard terms convert "please pay us faster" into a data-backed ask.
+            <span class="cite">Source: <a href="https://www.kodiakhub.com/blog/supplier-negotiation" target="_blank">Kodiak Hub</a></span>
+          </li>
+          <li>The <strong>US Chamber's Prompt Pay Pledge</strong> is the main private-sector lever: 21+ signatories (Intuit, JPMorgan, AGCO, Citadel, and others) commit to faster payment or financing access for small suppliers, plus clear communication of terms.
+            <span class="cite">Source: <a href="https://www.uschamber.com/major-initiative/prompt-pay-pledge" target="_blank">US Chamber of Commerce</a>, <a href="https://digitalasset.intuit.com/render/content/dam/intuit/ic/en_us/content/intuit-sds-prompt-pay-playbook.pdf" target="_blank">Prompt Pay Playbook (PDF)</a></span>
+          </li>
+          <li>On government contracts specifically, a 2023 Federal Acquisition Regulation rule requires accelerated payments to small-business subcontractors — a rare instance of a legally binding (if narrow) prompt-payment rule in the US.
+            <span class="cite">Source: <a href="https://www.federalregister.gov/documents/2023/02/14/2023-02425/federal-acquisition-regulation-accelerated-payments-applicable-to-contracts-with-certain-small" target="_blank">Federal Register</a>, <a href="https://www.acquisition.gov/far/52.232-40" target="_blank">FAR 52.232-40</a></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:22px;">
+      <strong>No US equivalent of a legal maximum term.</strong> Unlike the UK (Reporting on Payment Practices, a Small Business Commissioner, and public "late/slow payer" watchlists naming companies like AB InBev at 117 days and Coca-Cola Europacific Partners at 107 days) or the EU's Late Payment Directive, the US has no statutory cap on private B2B payment terms. Prompt-payment progress here runs entirely on voluntary pledges and negotiation leverage — there's no regulator to escalate to.
+      <br><br>Sources: <a href="https://www.grocerygazette.co.uk/2024/03/12/coca-cola-serial-late-players/" target="_blank">Grocery Gazette</a>, <a href="https://goodbusinesspays.com/the-late-the-slow-payment-watchlist-2023/" target="_blank">Good Business Pays Watchlist</a> (UK context, cited for comparison only).
+    </div>
+  </section>
+
+  <!-- SECTION 6: TOOLS -->
+  <section class="block" id="tools">
+    <div class="sec-head"><span class="sec-num">06</span><h2>The existing tools landscape</h2></div>
+    <p class="sec-intro">Almost every well-funded product in this space is a <em>financing</em> tool — it moves money faster around whatever term already got signed. Very few tools help a supplier actually negotiate or benchmark the term itself before signing.</p>
+
+    <div class="tool-grid">
+      <div class="tool"><span class="cat">Dynamic discounting</span><h4>C2FO</h4><p>Marketplace where suppliers name a discount rate for early payment; buyer accepts, funded from its own cash.</p><a href="https://c2fo.com/buyer-solutions/dynamic-supplier-finance/" target="_blank">c2fo.com →</a></div>
+      <div class="tool"><span class="cat">Dynamic discounting / SCF</span><h4>SAP Taulia</h4><p>Embedded in SAP AP workflows; dynamic discounting plus bank-funded supply chain finance in one platform.</p><a href="https://taulia.com/sap/" target="_blank">taulia.com →</a></div>
+      <div class="tool"><span class="cat">Supply chain finance</span><h4>PrimeRevenue</h4><p>Multi-funder SCF platform; buyer extends its own terms while suppliers get financed early payment through bank partners.</p><a href="https://primerevenue.com/" target="_blank">primerevenue.com →</a></div>
+      <div class="tool"><span class="cat">AI / instant payment</span><h4>Previse</h4><p>Scores invoices with AI to predict payment likelihood, enabling near-instant payment without a full SCF program.</p><a href="https://previse.co/en-us/" target="_blank">previse.co →</a></div>
+      <div class="tool"><span class="cat">Factoring</span><h4>FundThrough / eCapital</h4><p>Traditional non-recourse and recourse invoice factoring; rate depends on customer credit, invoice age, and industry.</p><a href="https://www.fundthrough.com/" target="_blank">fundthrough.com →</a></div>
+      <div class="tool"><span class="cat">Embedded trade credit</span><h4>Resolve Pay</h4><p>Lets a supplier offer net terms to its customers while getting paid upfront itself — non-recourse financing wrapped around the invoice.</p><a href="https://resolvepay.com/" target="_blank">resolvepay.com →</a></div>
+      <div class="tool"><span class="cat">Negotiation (rare)</span><h4>Lucid</h4><p>One of the few tools explicitly framed around AI-assisted payment-terms negotiation with industry benchmarking, not just financing.</p><a href="https://www.lucid.now/blog/how-ai-improves-payment-terms-negotiation/" target="_blank">lucid.now →</a></div>
+      <div class="tool"><span class="cat">AR collaboration</span><h4>Versapay</h4><p>Collaborative AR portal for disputes, communication and payment — adjacent to negotiation but not term-benchmarking itself.</p><a href="https://www.versapay.com/" target="_blank">versapay.com →</a></div>
+    </div>
+
+    <div class="callout" style="margin-top:20px;">
+      <strong>Gap identified:</strong> the market overwhelmingly treats the payment term as fixed and sells a product to work around it (discounting, factoring, SCF). Dedicated tools that help a small supplier <em>benchmark</em> what term it should be getting, or <em>negotiate</em> a shorter one before signing, are scarce — Lucid and generic "contract benchmarking" software are the closest matches found, and neither is built specifically around trade payment terms the way factoring/discounting products are.
+    </div>
+  </section>
+
+  <!-- SECTION 7: CALCULATOR -->
+  <section class="block" id="calculator">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Worked example — one invoice, three terms</h2></div>
+    <p class="sec-intro">Illustrative calculation (author's model, not a quoted source): the carrying cost of financing a receivable is <code>invoice × annual cost of capital × (days ÷ 365)</code>. Adjust the numbers below — defaults are a $50,000 invoice at a 12% annual cost of capital, a reasonable blended rate for a small business relying on a line of credit or occasional factoring.</p>
+
+    <div class="calc">
+      <div class="calc-head">
+        <div><strong>Invoice financing slip</strong></div>
+        <div class="doc-no">DOC NO. 2026-0050K</div>
+      </div>
+      <div class="calc-body">
+        <div>
+          <div class="field">
+            <label>Invoice amount <span class="val" id="invOut">$50,000</span></label>
+            <input type="range" id="invAmt" min="5000" max="250000" step="1000" value="50000">
+          </div>
+          <div class="field">
+            <label>Annual cost of capital <span class="val" id="rateOut">12%</span></label>
+            <input type="range" id="costRate" min="4" max="30" step="0.5" value="12">
+          </div>
+          <div class="field">
+            <label>Early-payment discount being offered <span class="val" id="discOut">2%</span></label>
+            <input type="range" id="discRate" min="0.5" max="5" step="0.25" value="2">
+          </div>
+          <div class="field">
+            <label>Days paid early if discount accepted <span class="val" id="earlyOut">80 days</span></label>
+            <input type="range" id="earlyDays" min="5" max="89" step="1" value="80">
+          </div>
+        </div>
+        <div>
+          <div class="term-badges">
+            <span class="stamp net30">NET 30</span><span class="stamp net60">NET 60</span><span class="stamp net90">NET 90</span>
+          </div>
+          <div class="result-row"><span>Carrying cost, held to Net 30</span><span class="v" id="c30">$493</span></div>
+          <div class="result-row"><span>Carrying cost, held to Net 60</span><span class="v" id="c60">$986</span></div>
+          <div class="result-row total"><span>Carrying cost, held to Net 90</span><span class="v" id="c90">$1,479</span></div>
+          <div class="result-row"><span>Extra cost of Net 90 vs. Net 30</span><span class="v" id="diff">$986</span></div>
+          <div class="result-row"><span>Annualized rate of the discount offer</span><span class="v" id="apr">9.3%</span></div>
+          <div class="result-row total"><span id="verdictLabel">Verdict</span><span class="v" id="verdict">Take the discount</span></div>
+        </div>
+      </div>
+      <div class="foot-note">Formula: carrying cost = amount × rate × (days ÷ 365). Annualized discount rate = discount% ÷ (100% − discount%) × 365 ÷ days early. Take the discount when its annualized rate is <em>below</em> your cost of capital.</div>
+    </div>
+  </section>
+
+  <!-- SECTION: RESEARCH -->
+  <section class="block" id="research">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Underlying academic research</h2></div>
+    <p class="sec-intro">Peer-reviewed and NBER-circulated papers on trade credit, bargaining power, and the implicit financing cost large buyers extract from small suppliers.</p>
+    <ul class="bullets">
+      <li><strong>Murfin, J. &amp; Njoroge, K. (2015).</strong> "The Implicit Costs of Trade Credit Borrowing by Large Firms." <em>The Review of Financial Studies</em>, 28(1), 112–145. Studied 1,063 buyer–seller pairs incl. 40 major retail buyers and 723 suppliers.
+        <span class="cite"><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2023409" target="_blank">SSRN paper</a> · <a href="https://academic.oup.com/rfs/article-abstract/28/1/112/1681329" target="_blank">Oxford Academic (journal)</a> · <a href="https://insights.som.yale.edu/insights/big-box-retailers-squeeze-smaller-suppliers-by-borrowing-from-them" target="_blank">Yale Insights plain-language summary</a></span>
+      </li>
+      <li><strong>Fabbri, D. &amp; Klapper, L.</strong> "Bargaining Power and Trade Credit." <em>Journal of Corporate Finance</em>, 41 (2016), 66–80.
+        <span class="cite"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0929119916300748" target="_blank">ScienceDirect</a> · <a href="https://www.citystgeorges.ac.uk/__data/assets/pdf_file/0006/183768/CBR-WP03-13.pdf" target="_blank">Working paper PDF (City St George's)</a> · <a href="https://www.bayes.citystgeorges.ac.uk/__data/assets/pdf_file/0005/179726/FabbriKlapper_JCF00129.pdf" target="_blank">Bayes Business School PDF</a></span>
+      </li>
+      <li><strong>"Bargaining power and trade credit: the heterogeneous effect of credit contractions."</strong> <em>Journal of Corporate Finance</em> (2024).
+        <span class="cite"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0378426624000293" target="_blank">ScienceDirect</a></span>
+      </li>
+      <li><strong>Klapper, L. &amp; Laeven, L.</strong> "Trade Credit Contracts." NBER Working Paper No. 17146.
+        <span class="cite"><a href="https://www.nber.org/system/files/working_papers/w17146/w17146.pdf" target="_blank">NBER PDF</a></span>
+      </li>
+      <li><strong>"Do Trade Creditors Possess Private Information? Evidence from Changes in Sell-Side Analyst Coverage."</strong> NBER Working Paper No. 25553.
+        <span class="cite"><a href="https://www.nber.org/system/files/working_papers/w25553/w25553.pdf" target="_blank">NBER PDF</a></span>
+      </li>
+      <li><strong>Trade credit contracts: design and regulation.</strong> <em>European Journal of Operational Research</em> (2022 special issue survey).
+        <span class="cite"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0377221721003660" target="_blank">ScienceDirect</a></span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- SOURCES -->
+  <section class="block" id="sources">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Full source list</h2></div>
+    <p class="sec-intro">Every link cited above, grouped by category, for reference or further reading.</p>
+
+    <div class="src-cat">
+      <h3>Surveys &amp; industry data</h3>
+      <ul class="src-list">
+        <li><a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2025/" target="_blank">Intuit QuickBooks — 2025 US Small Business Late Payments Report</a></li>
+        <li><a href="https://quickbooks.intuit.com/r/small-business-data/small-business-late-payments-report-2026/" target="_blank">Intuit QuickBooks — 2026 Small Business Late Payments Report</a></li>
+        <li><a href="https://kvia.com/stacker-small-business/2026/07/21/report-finds-more-small-businesses-are-carrying-overdue-invoices-than-last-year/" target="_blank">Stacker/KVIA — coverage of the 2026 overdue-invoices report</a></li>
+        <li><a href="https://www.uschamber.com/sbindex/summary" target="_blank">US Chamber &amp; MetLife — Small Business Index, Q4 2025 summary</a></li>
+        <li><a href="https://www.fedsmallbusiness.org/reports/survey" target="_blank">Federal Reserve — Small Business Credit Survey</a></li>
+        <li><a href="https://fedcommunities.org/2025-small-business-credit-survey-key-insights/" target="_blank">Fed Communities — 2025 SBCS key insights</a></li>
+        <li><a href="https://www.creditpulse.com/blog/days-sales-outstanding-dso-by-industry-2025-benchmarks-data-analysis" target="_blank">CreditPulse — DSO by Industry (2025 benchmarks)</a></li>
+        <li><a href="https://www.stuut.ai/blog/dso-benchmarks-by-industry" target="_blank">Stuut.ai — DSO benchmarks by industry (2026)</a></li>
+        <li><a href="https://www.stuut.ai/blog/dso-by-company-size-benchmarks-and-improvement-tactics-for-small-mid-market-and-enterprise" target="_blank">Stuut.ai — DSO by company size</a></li>
+        <li><a href="https://www.smbcompass.com/average-dso-by-industry/" target="_blank">SMB Compass — Average DSO by Industry</a></li>
+      </ul>
+    </div>
+
+    <div class="src-cat">
+      <h3>Payment terms &amp; contracts</h3>
+      <ul class="src-list">
+        <li><a href="https://www.corpay.com/resources/blog/business-payment-terms" target="_blank">Corpay — Business Payment Terms guide</a></li>
+        <li><a href="https://www.jpmorgan.com/insights/banking/commercial-banking/net-payment-terms-benefits-of-net-30-60-90-terms" target="_blank">JPMorgan — Net Payment Terms: Net 30/60/90</a></li>
+        <li><a href="https://nowcorp.com/resources/should-you-offer-net-30-60-90-payment-terms/" target="_blank">Now Corp — Net 30 vs 60 vs 90</a></li>
+        <li><a href="https://resolvepay.com/blog/net-terms-guide-for-b2b-e-commerce-stores-manufacturing-distribution" target="_blank">Resolve Pay — Net terms guide for manufacturing &amp; distribution</a></li>
+        <li><a href="https://www.creditpulse.com/blog/net-30-payment-terms" target="_blank">CreditPulse — Net 30 Payment Terms: what they cost</a></li>
+      </ul>
+    </div>
+
+    <div class="src-cat">
+      <h3>Dynamic discounting</h3>
+      <ul class="src-list">
+        <li><a href="https://c2fo.com/glossary/dynamic-discounting/" target="_blank">C2FO — Dynamic Discounting glossary</a></li>
+        <li><a href="https://c2fo.com/glossary/early-payment-discount/" target="_blank">C2FO — Early Payment Discount glossary</a></li>
+        <li><a href="https://c2fo.com/resources/dynamic-discounting/using-c2fos-early-payment-discount-the-difference-between-an-apr-offer-and-a-discount-offer-2/" target="_blank">C2FO — APR offer vs. discount offer</a></li>
+        <li><a href="https://c2fo.com/resources/dynamic-discounting/dynamic-discounting-vs-supply-chain-finance/" target="_blank">C2FO — Dynamic discounting vs. supply chain finance</a></li>
+        <li><a href="https://taulia.com/dynamic-discounting-phase-2/" target="_blank">SAP Taulia — Dynamic Discounting Phase 2</a></li>
+        <li><a href="https://taulia.com/platform/payables/dynamic-discounting/" target="_blank">SAP Taulia — Dynamic Discounting platform page</a></li>
+        <li><a href="https://erp.today/applied-materials-sap-taulia-dynamic-discounting-finance-transformation/" target="_blank">ERP Today — Applied Materials case study</a></li>
+        <li><a href="https://beancount.io/blog/2026/07/29/dynamic-discounting-c2fo-taulia-small-suppliers-guide" target="_blank">Beancount.io — Dynamic discounting guide for small suppliers</a></li>
+        <li><a href="https://www.pymnts.com/news/2015/c2fo-finds-financial-middle-ground-between-buyers-and-suppliers/" target="_blank">PYMNTS — C2FO financial middle ground</a></li>
+      </ul>
+    </div>
+
+    <div class="src-cat">
+      <h3>Factoring</h3>
+      <ul class="src-list">
+        <li><a href="https://www.fundthrough.com/blog/invoice-factoring/invoice-factoring-rates-what-can-i-expect/" target="_blank">FundThrough — Invoice Factoring Rates</a></li>
+        <li><a href="https://ecapital.com/blog/2022-invoice-factoring-rates-and-costs/" target="_blank">eCapital — Invoice Factoring Rates and Costs</a></li>
+        <li><a href="https://www.smbcompass.com/invoice-factoring-rates/" target="_blank">SMB Compass — Invoice Factoring Rates</a></li>
+        <li><a href="https://resolvepay.com/blog/10-statistics-comparing-factoring-vs-dynamic-discounting-costs" target="_blank">Resolve Pay — 10 statistics: factoring vs. dynamic discounting</a></li>
+        <li><a href="https://www.fundthrough.com/invoice-factoring-companies-usa-2026-update/" target="_blank">FundThrough — Best Factoring Companies in the USA (2025 update)</a></li>
+      </ul>
+    </div>
+
+    <div class="src-cat">
+      <h3>Negotiation &amp; advocacy</h3>
+      <ul class="src-list">
+        <li><a href="https://www.uschamber.com/major-initiative/prompt-pay-pledge" target="_blank">US Chamber of Commerce — Prompt Pay Pledge</a></li>
+        <li><a href="https://www.uschamber.com/small-business/everything-you-need-to-know-about-the-prompt-pay-pledge" target="_blank">US Chamber — Prompt Pay Pledge FAQ</a></li>
+        <li><a href="https://digitalasset.intuit.com/render/content/dam/intuit/ic/en_us/content/intuit-sds-prompt-pay-playbook.pdf" target="_blank">Intuit — Prompt Pay Playbook (PDF)</a></li>
+        <li><a href="https://www.federalregister.gov/documents/2023/02/14/2023-02425/federal-acquisition-regulation-accelerated-payments-applicable-to-contracts-with-certain-small" target="_blank">Federal Register — FAR accelerated payments rule</a></li>
+        <li><a href="https://www.acquisition.gov/far/52.232-40" target="_blank">Acquisition.gov — FAR 52.232-40</a></li>
+        <li><a href="https://c2fo.com/resources/customer-success/how-to-negotiate-with-buyers-6-strategies-for-suppliers/" target="_blank">C2FO — How to negotiate with buyers</a></li>
+        <li><a href="https://phoenixstrategy.group/blog/how-to-negotiate-supplier-payment-terms" target="_blank">Phoenix Strategy Group — Negotiating supplier payment terms</a></li>
+        <li><a href="https://www.kodiakhub.com/blog/supplier-negotiation" target="_blank">Kodiak Hub — Supplier negotiation mastery</a></li>
+        <li><a href="https://www.grocerygazette.co.uk/2024/03/12/coca-cola-serial-late-players/" target="_blank">Grocery Gazette — "Serial late payers" (UK, comparative)</a></li>
+        <li><a href="https://goodbusinesspays.com/the-late-the-slow-payment-watchlist-2023/" target="_blank">Good Business Pays — Late &amp; Slow Payment Watchlist (UK, comparative)</a></li>
+      </ul>
+    </div>
+
+    <div class="src-cat">
+      <h3>Tools</h3>
+      <ul class="src-list">
+        <li><a href="https://c2fo.com/buyer-solutions/dynamic-supplier-finance/" target="_blank">C2FO — Dynamic Supplier Finance</a></li>
+        <li><a href="https://taulia.com/sap/" target="_blank">SAP Taulia</a></li>
+        <li><a href="https://primerevenue.com/" target="_blank">PrimeRevenue</a></li>
+        <li><a href="https://previse.co/en-us/" target="_blank">Previse USA</a></li>
+        <li><a href="https://resolvepay.com/" target="_blank">Resolve Pay</a></li>
+        <li><a href="https://www.lucid.now/blog/how-ai-improves-payment-terms-negotiation/" target="_blank">Lucid — AI payment-terms negotiation</a></li>
+        <li><a href="https://www.versapay.com/" target="_blank">Versapay</a></li>
+      </ul>
+    </div>
+
+    <div class="src-cat">
+      <h3>Academic research</h3>
+      <ul class="src-list">
+        <li><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2023409" target="_blank">Murfin &amp; Njoroge (2015), SSRN</a></li>
+        <li><a href="https://academic.oup.com/rfs/article-abstract/28/1/112/1681329" target="_blank">Murfin &amp; Njoroge (2015), Review of Financial Studies</a></li>
+        <li><a href="https://insights.som.yale.edu/insights/big-box-retailers-squeeze-smaller-suppliers-by-borrowing-from-them" target="_blank">Yale Insights summary</a></li>
+        <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0929119916300748" target="_blank">Fabbri &amp; Klapper, Journal of Corporate Finance</a></li>
+        <li><a href="https://www.citystgeorges.ac.uk/__data/assets/pdf_file/0006/183768/CBR-WP03-13.pdf" target="_blank">Fabbri &amp; Klapper working paper PDF</a></li>
+        <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0378426624000293" target="_blank">Bargaining power &amp; credit contractions, J. Corp. Finance 2024</a></li>
+        <li><a href="https://www.nber.org/system/files/working_papers/w17146/w17146.pdf" target="_blank">Klapper &amp; Laeven, NBER WP 17146</a></li>
+        <li><a href="https://www.nber.org/system/files/working_papers/w25553/w25553.pdf" target="_blank">NBER WP 25553 — trade creditor private information</a></li>
+        <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0377221721003660" target="_blank">Trade credit contracts: design and regulation, EJOR</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="page">
+    Compiled September 19, 2026 for internal research use. Figures marked "author's calculation" are illustrative models built from cited methodologies, not quoted directly from a source. Verify current rates directly with vendors before using in customer-facing material.
+  </footer>
+</div>
+
+<script>
+(function(){
+  function fmt(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+  var invAmt=document.getElementById('invAmt'), costRate=document.getElementById('costRate'),
+      discRate=document.getElementById('discRate'), earlyDays=document.getElementById('earlyDays');
+  var invOut=document.getElementById('invOut'), rateOut=document.getElementById('rateOut'),
+      discOut=document.getElementById('discOut'), earlyOut=document.getElementById('earlyOut');
+  var c30=document.getElementById('c30'), c60=document.getElementById('c60'), c90=document.getElementById('c90'),
+      diff=document.getElementById('diff'), apr=document.getElementById('apr'), verdict=document.getElementById('verdict');
+
+  function render(){
+    var amount = parseFloat(invAmt.value);
+    var rate = parseFloat(costRate.value)/100;
+    var disc = parseFloat(discRate.value)/100;
+    var days = parseFloat(earlyDays.value);
+
+    invOut.textContent = fmt(amount);
+    rateOut.textContent = costRate.value + '%';
+    discOut.textContent = discRate.value + '%';
+    earlyOut.textContent = days + ' days';
+
+    var cost30 = amount * rate * (30/365);
+    var cost60 = amount * rate * (60/365);
+    var cost90 = amount * rate * (90/365);
+    c30.textContent = fmt(cost30);
+    c60.textContent = fmt(cost60);
+    c90.textContent = fmt(cost90);
+    diff.textContent = fmt(cost90 - cost30);
+
+    var annualized = (disc / (1 - disc)) * (365 / days) * 100;
+    apr.textContent = annualized.toFixed(1) + '%';
+
+    if(annualized < costRate.value){
+      verdict.textContent = 'Take the discount';
+      verdict.style.color = 'var(--good)';
+    } else {
+      verdict.textContent = 'Hold, finance elsewhere';
+      verdict.style.color = 'var(--bad)';
+    }
+  }
+  [invAmt, costRate, discRate, earlyDays].forEach(function(el){
+    el.addEventListener('input', render);
+  });
+  render();
+})();
+</script>
+
+<script>
+(function(){
+  // Local keyword-matched Q&A over this page's own research. No external API.
+  var KB = [
+    { q:"What payment terms do manufacturers get from big buyers?",
+      tags:["manufacturing","oem","auto","parts","manufacturer","procurement cycle","net 60","net 90"],
+      a:"Manufacturing suppliers to large OEMs typically see Net 60–Net 90 contracted terms, with realized DSO of 45–60 days. It's structural: buyer volume and long procurement cycles set the term — a parts supplier to a major automaker might land on Net 90 simply because of the OEM's order size.",
+      href:"#terms" },
+    { q:"What are typical terms for professional services firms?",
+      tags:["professional services","consulting","agency","retainer","milestone billing"],
+      a:"Professional services firms usually contract Net 30–Net 45 but realize 45–65 days DSO — milestone and retainer billing plus internal buyer approval chains routinely push collection well past the stated term.",
+      href:"#terms" },
+    { q:"What terms does wholesale and distribution get?",
+      tags:["wholesale","distribution","distributor"],
+      a:"Wholesale/distribution typically runs Net 30–Net 60 contracted, with the fastest realized DSO of the group (30–50 days) because invoices are tied to shipped, delivery-documented goods, which narrows the dispute window.",
+      href:"#terms" },
+    { q:"Why does construction take so long to get paid?",
+      tags:["construction","subcontractor","retainage","progress billing"],
+      a:"Construction realizes 90–120 days DSO — the longest of any category studied — due to milestone-based progress billing plus 5–10% retainage withheld until project completion.",
+      href:"#terms" },
+    { q:"What is DSO and what's a good benchmark?",
+      tags:["dso","days sales outstanding","benchmark","good dso","what is dso"],
+      a:"DSO (Days Sales Outstanding) measures how long it actually takes to collect after a sale — the real cash-timing number, versus the contracted term. Rough benchmarks: small businesses target 15–30 days, mid-market 30–45, enterprise 45–60+. The broad US median was 40.1–40.5 days across Q4 2025–Q1 2026.",
+      href:"#dso" },
+    { q:"How many small businesses have unpaid invoices right now?",
+      tags:["overdue","unpaid invoices","late payment stats","how many small businesses","carrying overdue"],
+      a:"59% of US small businesses carried overdue invoices in 2026 (up from 56% in 2025), averaging $17.7K unpaid at any given time, per Intuit QuickBooks' annual survey.",
+      href:"#dso" },
+    { q:"What happens to a small business when it gets paid late?",
+      tags:["effects of late payment","cash flow gap","delay salary","take on debt","impact of late payment"],
+      a:"Real knock-on effects: 26% of owners delayed their own salary, 19% took on debt or used credit cards they otherwise wouldn't have, 18% paid a bill late and ate a penalty, and 49% call standard processing delays a critical or moderate cash-flow gap.",
+      href:"#dso" },
+    { q:"Are companies getting better or worse about paying on time?",
+      tags:["improving","getting better","trend","payment trend","worse","better"],
+      a:"Mixed but slightly improving: US small businesses were paid an average of 7.8 days late in Q4 2025, the shortest lag in four years. But the share carrying overdue invoices actually rose, from 56% in 2025 to 59% in 2026 — fewer average days late, but more businesses affected.",
+      href:"#dso" },
+    { q:"How does dynamic discounting work?",
+      tags:["dynamic discounting","c2fo","taulia","how it works","mechanics","how does it work"],
+      a:"The buyer pays an invoice early using its own cash, in exchange for a discount that scales with how many days early it pays — priced as an APR: discount% = APR × (days early ÷ 365). No bank or factor is involved; the supplier sets or accepts the rate directly through platforms like C2FO or SAP Taulia.",
+      href:"#discounting" },
+    { q:"What discount rate does C2FO typically offer?",
+      tags:["c2fo apr","c2fo rate","average apr","5.82","c2fo discount"],
+      a:"C2FO reports an average buyer-side APR around 5.82%, achieved by blending multiple suppliers' accepted rates to hit a buyer's target. (Not directly comparable to unsecured small-business lender APRs — different product, different risk being priced.)",
+      href:"#discounting" },
+    { q:"Is a 2% early payment discount worth taking?",
+      tags:["is it worth it","should i take the discount","annualize","2/10 net 30","worth taking"],
+      a:"Depends entirely on how many days early it buys you — not on whether the underlying term is Net 30 or Net 60, which doesn't change the math. Annualize it: rate = discount% ÷ (100%−discount%) × 365 ÷ days early. A 2% discount for 20 days early is ~37% annualized (expensive); to bring that same 2% down to ~12% you'd need roughly 60 days early. Take the deal only if the annualized rate beats your cost of capital — try the calculator.",
+      href:"#calculator" },
+    { q:"How much does invoice factoring cost?",
+      tags:["factoring cost","factoring rate","how much does factoring cost","factoring fees"],
+      a:"Typically 1–5% of invoice value per month (most businesses land at 1.5–3.5%), plus possible application, service, and wire fees on top. Advance rates run 80–90% upfront, though transportation/freight factoring can reach 97–100%+.",
+      href:"#factoring" },
+    { q:"Is factoring cheaper than dynamic discounting?",
+      tags:["factoring vs dynamic discounting","which is cheaper","compare factoring"],
+      a:"No — dynamic discounting (0.5–2% of invoice value) is typically 3–10x cheaper annualized than factoring (1–5% per month), because factoring's price includes a real credit-risk transfer: the factor is buying your customer's payment risk, not just accelerating a payment the buyer already trusts.",
+      href:"#factoring" },
+    { q:"What are the downsides of invoice factoring?",
+      tags:["downsides of factoring","cons of factoring","factoring risk","disadvantages"],
+      a:"It's 3–10x more expensive than discounting annualized, fees stack (application/service/wire), a third party now contacts your customer for collection which can strain the relationship, and invoices over ~60 days old get priced much higher or declined outright.",
+      href:"#factoring" },
+    { q:"Who has more negotiating power, the buyer or the supplier?",
+      tags:["bargaining power","negotiating power","who has leverage"],
+      a:"The research is blunt: suppliers with weak bargaining power extend more trade credit, sell a larger share of goods on credit, and tolerate longer payment periods before penalties. A one-standard-deviation increase in a buyer's bargaining power increases its use of payables financing by 1.73% of sales (Fabbri & Klapper).",
+      href:"#negotiation" },
+    { q:"What did the Murfin and Njoroge study find?",
+      tags:["murfin","njoroge","implicit costs of trade credit","big box retailers"],
+      a:"Studying 1,063 buyer-seller pairs — specifically 40 major public retail buyers and their suppliers — they found that when a large buyer slows payment by one month, a financially constrained supplier cuts capital expenditure by ~1.2% of assets. The median supplier in that sample ($29M market cap) faced interest rates roughly 6x the median buyer's ($23B market cap). That 6x figure describes this specific study's sample, not small suppliers in general.",
+      href:"#research" },
+    { q:"What is the Prompt Pay Pledge?",
+      tags:["prompt pay pledge","us chamber","prompt payment"],
+      a:"A US Chamber of Commerce initiative where large companies voluntarily commit to paying small suppliers faster or enabling private financing, plus communicating terms clearly. 21+ companies have signed, including Intuit, JPMorgan, AGCO, and Citadel — but it's voluntary, with no penalty for not following through.",
+      href:"#negotiation" },
+    { q:"Is there a US law limiting how long companies can take to pay?",
+      tags:["law","legal limit","regulation","payment law","maximum payment term","illegal"],
+      a:"No general one. Unlike the UK (payment-practice reporting, a Small Business Commissioner, public late-payer watchlists) or the EU's Late Payment Directive, US private B2B payment terms have no statutory cap. The one binding exception: a 2023 Federal Acquisition Regulation rule requiring accelerated payments to small-business subcontractors on federal contracts.",
+      href:"#negotiation" },
+    { q:"How can I negotiate shorter payment terms with a big buyer?",
+      tags:["negotiate","negotiation tactics","shorten payment terms","how to negotiate"],
+      a:"Separate the price conversation from the payment-terms conversation — bundling lets the buyer trade a worse term for a price concession unnoticed. Bring 2–3 competitor quotes or documented industry-standard terms as leverage. Better access to credit itself also measurably improves a supplier's negotiating position against powerful buyers — financing and negotiating leverage aren't separate things.",
+      href:"#negotiation" },
+    { q:"Is there a tool that helps negotiate payment terms instead of just financing around them?",
+      tags:["tools to negotiate","benchmark payment terms","negotiation tool","gap in the market"],
+      a:"Barely. Almost every well-funded product in this space (C2FO, Taulia, PrimeRevenue, factoring companies) treats the signed term as fixed and sells a way to work around it. Lucid is one of the few framed around AI-assisted terms negotiation with benchmarking — this is flagged as a real market gap in the research.",
+      href:"#tools" },
+    { q:"What tools exist for early payment or factoring?",
+      tags:["what tools exist","list of tools","which platforms","primerevenue","previse","versapay"],
+      a:"Dynamic discounting: C2FO, SAP Taulia. Supply chain finance: PrimeRevenue. AI instant-payment scoring: Previse. Factoring: FundThrough, eCapital. Embedded trade credit: Resolve Pay. AR collaboration: Versapay. See the Tools section for what each actually does.",
+      href:"#tools" },
+    { q:"How much extra does Net 90 cost me on a $50,000 invoice?",
+      tags:["50000","$50k","net 90 cost","net 30 vs net 90","example","50k invoice"],
+      a:"At a 12% annual cost of capital: Net 30 costs about $493 to carry, Net 60 about $986, Net 90 about $1,479 — so moving from Net 30 to Net 90 costs roughly $986 more in financing cost on a single $50K invoice. Use the calculator to plug in your own numbers.",
+      href:"#calculator" },
+    { q:"What cost of capital should I assume for these calculations?",
+      tags:["cost of capital","what rate to use","assumption","interest rate to use"],
+      a:"12% annual is used as the default here — a reasonable blended rate for a small business relying on a line of credit or occasional factoring. Swap in your actual borrowing rate (credit card APR, LOC rate, or blended average) in the calculator for a number specific to your business.",
+      href:"#calculator" },
+    { q:"Which big companies are known for paying suppliers slowly?",
+      tags:["slow payers","late payers","which companies pay late","ab inbev","coca-cola","mondelez"],
+      a:"UK comparative data (used here for illustration, not a US claim) found AB InBev averaging 117 days to pay, Coca-Cola Europacific Partners 107 days, and Mondelez 99 days. No equivalent public 'late payer watchlist' exists for the US market.",
+      href:"#negotiation" },
+    { q:"How is the annualized rate of a discount calculated?",
+      tags:["annualized rate formula","apr formula","how to calculate annualized"],
+      a:"annualized rate = discount% ÷ (100% − discount%) × 365 ÷ days paid early. Compare that number to your real cost of capital — if the annualized rate is lower, take the discount; if higher, hold and finance the gap some other way.",
+      href:"#discounting" }
+  ];
+
+  var STOP = new Set(["what","is","are","the","a","an","how","do","does","can","i","my","for","of","in","on","to","and","or","with","me","you","your","this","that","it","should","would","get","paid","when"]);
+
+  function clean(s){ return (s||'').toLowerCase().replace(/[^a-z0-9%$.\s]/g,' ').replace(/\s+/g,' ').trim(); }
+
+  function search(query){
+    var q = clean(query);
+    if(!q) return [];
+    var tokens = q.split(' ').filter(function(t){ return t && !STOP.has(t); });
+    var scored = KB.map(function(entry){
+      var score = 0;
+      entry.tags.forEach(function(tag){
+        var t = tag.toLowerCase();
+        if(t.indexOf(' ') > -1){
+          if(q.indexOf(t) > -1) score += 6;
+        } else if(tokens.indexOf(t) > -1){
+          score += 2;
+        } else if(q.indexOf(t) > -1){
+          score += 1;
+        }
+      });
+      // light credit for overlap with the question text itself
+      var qWords = clean(entry.q).split(' ');
+      tokens.forEach(function(tok){ if(qWords.indexOf(tok) > -1) score += 1; });
+      return { entry: entry, score: score };
+    });
+    return scored.filter(function(s){ return s.score > 0; })
+                 .sort(function(a,b){ return b.score - a.score; })
+                 .slice(0, 3);
+  }
+
+  var resultsEl = document.getElementById('askResults');
+  var inputEl = document.getElementById('askInput');
+  var btnEl = document.getElementById('askBtn');
+  var chipsEl = document.getElementById('askChips');
+
+  function renderResults(query){
+    var matches = search(query);
+    resultsEl.innerHTML = '';
+    if(!query.trim()){
+      resultsEl.innerHTML = '<div class="ask-empty">Try a question above, or click one of the examples.</div>';
+      return;
+    }
+    if(matches.length === 0){
+      resultsEl.innerHTML = '<div class="ask-empty">No match found in this research for that question. Try rephrasing, or browse the <a href="#sources">full source list</a> — this only knows what\'s written on this page.</div>';
+      return;
+    }
+    matches.forEach(function(m){
+      var div = document.createElement('div');
+      div.className = 'ask-result';
+      div.innerHTML =
+        '<div class="q">' + m.entry.q + '</div>' +
+        '<div class="a">' + m.entry.a + '</div>' +
+        '<div class="meta"><span>Matched ' + m.score + ' keyword point' + (m.score===1?'':'s') + '</span>' +
+        '<a href="' + m.entry.href + '">Jump to section →</a></div>';
+      resultsEl.appendChild(div);
+    });
+  }
+
+  var EXAMPLES = [
+    "How does dynamic discounting work?",
+    "Is factoring cheaper than discounting?",
+    "How much does Net 90 cost on a $50K invoice?",
+    "Is there a US law on late payment?",
+    "How do I negotiate shorter terms?",
+    "What's a good DSO benchmark?"
+  ];
+  EXAMPLES.forEach(function(ex){
+    var chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip';
+    chip.textContent = ex;
+    chip.addEventListener('click', function(){
+      inputEl.value = ex;
+      renderResults(ex);
+    });
+    chipsEl.appendChild(chip);
+  });
+
+  btnEl.addEventListener('click', function(){ renderResults(inputEl.value); });
+  inputEl.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); renderResults(inputEl.value); }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "@payfair/eval",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline evaluation harness for PayFair's message drafting and copilot fallback. Runs with no API key -- it only exercises the deterministic template path and (optionally) scores externally-generated messages.",
+  "scripts": {
+    "start": "tsx src/run.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@payfair/engine": "file:../engine"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.2"
+  }
+}
